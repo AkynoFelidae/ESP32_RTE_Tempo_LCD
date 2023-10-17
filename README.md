@@ -2,6 +2,12 @@
 Get cost color code (tempo) from EDF/RTE and display on the screen
 
 Uses arduino toolchain and libraries
+- Use WiFi in STA mode to connect to home network
+- Synchronise NTP server to get current date and time
+- Connect to RTE-France to the Tempo calendar API
+- Display the color for the day and the next day
+
+![color panels](https://github.com/dbocktaels/ESP32_RTE_Tempo_LCD/blob/main/ressource/color_panels.png)
 
 # Hardware
 ESP32 2424S102
