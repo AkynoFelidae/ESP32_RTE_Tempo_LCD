@@ -62,3 +62,6 @@ example of data
 	}
 }
 ```
+```json
+{"tempo_like_calendars":[{"start_date":"2016-03-12T00:00:00+01:00","end_date":"2016-03-13T00:00:00+01:00","values":{"start_date":"2016-03-12T00:00:00+01:00","end_date":"2016-03-13T00:00:00+01:00","value":"BLUE","updated_date":"2016-03-11T10:20:00+01:00"}}]}
+```
