@@ -17,6 +17,7 @@ ESP32 2424S102
 # Required arduino libraries
 - NTPClient from Fabrice Weinberg version=3.2.1 https://github.com/arduino-libraries/NTPClient
 - LovyanGFX from lovyan03 version=1.1.9 https://github.com/lovyan03/LovyanGFX
+- Arduino JSON from Arduino https://github.com/arduino-libraries/Arduino_JSON
 
 # Configuration
 require update for your Wifi network
