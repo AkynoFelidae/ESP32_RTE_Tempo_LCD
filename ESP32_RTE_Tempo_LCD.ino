@@ -47,6 +47,8 @@ static const uint32_t screenHeight = 240;
 const char* ssid = "xxxxxxxxx";
 const char* password = "xxxxxxxxxx";
 
+const uint32_t refresh_sec = 3600; // wait for 1 hour
+
 const char * idRTE = "Basic xxxxxxxxx==";
 
 const char* oauthURI   = "https://digital.iservices.rte-france.com/token/oauth/";
@@ -109,7 +111,8 @@ String errorDescription(int code, HTTPClient& http) {
     case 414: return "L'URI transmise par l’appelant dépasse 2048 caractères";
     case 429: return "Le nombre d’appel maximum dans un certain laps de temps est dépassé";
     case 509: return "L'ensemble des requêtes des clients atteint la limite maximale";
-    default: break;
+    default: return String(code);
+    break;
   }
   return http.errorToString(code);
 }
@@ -161,19 +164,21 @@ bool getTempoToday(){
 
   timeClient.update();
   unsigned long epochNow = timeClient.getEpochTime();
+  unsigned long epochYesterday = timeClient.getEpochTime() - 86400L;
   unsigned long epochTomorrow = timeClient.getEpochTime() + 86400L;
   unsigned long epochTomorrowEnd = timeClient.getEpochTime() + 2*86400L;
 
   today_date = getFormattedDate(epochNow); 
   tomorrow_date = getFormattedDate(epochTomorrow);
   String tomorrowEnd_date = getFormattedDate(epochTomorrowEnd);
+  String yesterday_date = getFormattedDate(epochYesterday); 
 
   Serial.println("GET tempo calendars : " + today_date + " -> " + tomorrowEnd_date);
   
   ///open_api/tempo_like_supply_contract/v1/tempo_like_calendars?start_date=2015-06-08T00:00:00%2B02:00&end_date=2015-06-11T00:00:00%2B02:00&fallback_status=true
   String url = tempoURI;
-  url += "?start_date=" + today_date + "T00:00:00+02:00";
-  url += "&end_date=" + tomorrowEnd_date + "T00:00:00+02:00";;
+  url += "?start_date=" + yesterday_date + "T00:00:00+01:00";
+  url += "&end_date=" + tomorrowEnd_date + "T00:00:00+01:00";;
   url += "&fallback_status=true";
 
 
@@ -194,32 +199,24 @@ bool getTempoToday(){
 
       JSONVar values = json["tempo_like_calendars"]["values"];
       
-      String date0 = values[0]["start_date"];
-      String color0 = values[0]["value"];
-      // check which value is first
-      splitT = date0.indexOf("T");
-      date0 = date0.substring(0, splitT);
 
       tomorrow_color="BLACK";
       today_color="BLACK";
 
-      if (date0.equals(today_date)){
-        today_color=color0;
-      }else if(date0.equals(tomorrow_date)){
-        tomorrow_color=color0;
-      }
 
-      if (values.length()>1){
-        String date1 = values[1]["start_date"];
-        String color1 = values[1]["value"];
-        splitT = date1.indexOf("T");
-        date1 = date1.substring(0, splitT);
+      for (uint8_t i=0; i<values.length();i++){
+        String date0 = values[i]["start_date"];
+        String color0 = values[i]["value"];
+        // check which value is first
+        splitT = date0.indexOf("T");
+        date0 = date0.substring(0, splitT);
 
-        if (date1.equals(today_date)){
-          today_color=color1;
-        }else if(date1.equals(tomorrow_date)){
-          tomorrow_color=color1;
+        if (date0.equals(today_date)){
+          today_color=color0;
+        }else if(date0.equals(tomorrow_date)){
+          tomorrow_color=color0;
         }
+
       }
 
       Serial.print("today : " + today_date);
@@ -373,8 +370,7 @@ void loop() {
     }
   }
   updateScreen();
-  delay(60000);       // waits for a minute
-  token_expire-=60;   //remove 1 minute from counter
-//  Serial.println(token_expire);
+  delay(refresh_sec*1000);       // waits for a minute
+  token_expire-=refresh_sec;   //remove 1 minute from counter
+  //  Serial.println(token_expire);
 }
-
