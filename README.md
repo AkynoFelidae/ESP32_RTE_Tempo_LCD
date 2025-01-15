@@ -1,4 +1,10 @@
 # EPS32_RTE_Tempo_LCD
+
+
+### :fr: Ce fork met la date en FRANÇAIS, et ça, c'est beau (enfin, si ça marche...) :fr:
+
+
+
 Get cost color code (tempo) from EDF/RTE and display on the screen
 
 Uses arduino toolchain and libraries
